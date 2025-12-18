@@ -1,0 +1,115 @@
+@model ProyectoGestionEventos.Models.Recurso
+
+@{
+ ViewData["Title"] = "Crear Recurso";
+}
+
+<div class="mt-5">
+ <h1 class="bg-warning text-white text-center py-4 rounded shadow mb-4">
+ <i class="fas fa-box-open me-2"></i>Crear Recurso
+ </h1>
+
+ <div class="card shadow">
+ <div class="card-body">
+ <form asp-action="Create">
+ <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+ 
+ <div class="row g-3">
+ <div class="col-md-6">
+ <label asp-for="Nombre" class="form-label fw-bold">Nombre del Recurso</label>
+ <input asp-for="Nombre" class="form-control" />
+ <span asp-validation-for="Nombre" class="text-danger"></span>
+ <div id="e-Nombre" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="TipoRecurso" class="form-label fw-bold">Tipo de Recurso</label>
+ <select asp-for="TipoRecurso" class="form-select" asp-items="ViewBag.TipoRecurso">
+ <option value="">-- Seleccione --</option>
+ </select>
+ <span asp-validation-for="TipoRecurso" class="text-danger"></span>
+ <div id="e-TipoRecurso" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="CantidadDisponible" class="form-label fw-bold">Cantidad Disponible</label>
+ <input asp-for="CantidadDisponible" type="number" min="0" class="form-control" />
+ <span asp-validation-for="CantidadDisponible" class="text-danger"></span>
+ <div id="e-CantidadDisponible" class="small"></div>
+ </div>
+
+ <div class="col-12">
+ <label asp-for="Descripcion" class="form-label fw-bold">Descripción (Opcional)</label>
+ <textarea asp-for="Descripcion" rows="3" class="form-control"></textarea>
+ <span asp-validation-for="Descripcion" class="text-danger"></span>
+ </div>
+ </div>
+
+ <div class="d-flex justify-content-center gap-3 mt-4">
+ <button type="reset" onclick="limpiar()" class="btn btn-secondary">
+ <i class="fas fa-eraser me-2"></i>Limpiar
+ </button>
+ <button type="submit" onclick="validar(event)" class="btn btn-warning text-white">
+ <i class="fas fa-save me-2"></i>Crear
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+
+ <div class="text-end mt-4">
+ <a asp-action="Index" class="btn btn-dark">
+ <i class="fas fa-arrow-left me-2"></i>Volver
+ </a>
+ </div>
+</div>
+
+<script src="~/js/helper.js"></script>
+<script>
+    const validar = (evt) => {
+        let isValid = true;
+        document.querySelectorAll('form input:not([type="hidden"]):not([readonly]), form select, form textarea').forEach(item => {
+            const errorDiv = document.getElementById('e-' + item.id);
+            if (!errorDiv) return;
+            
+            if (item.value.trim() == '' && item.id != 'Descripcion') {
+                item.classList.add('is-invalid');
+                errorDiv.innerHTML = '<span class="text-danger">Campo obligatorio</span>';
+                isValid = false;
+            } else {
+                errorDiv.innerHTML = '';
+                item.classList.remove('is-invalid');
+                
+                // Validar solo espacios
+                if (item.value.trim() !== '' && !validarSoloEspacios(item.value) && item.id != 'Descripcion') {
+                    item.classList.add('is-invalid');
+                    errorDiv.innerHTML = '<span class="text-danger">No puede contener solo espacios</span>';
+                    isValid = false;
+                }
+                
+                if (item.id == 'CantidadDisponible' && item.value < 0) {
+                    item.classList.add('is-invalid');
+                    errorDiv.innerHTML = '<span class="text-danger">La cantidad debe ser mayor o igual a 0</span>';
+                    isValid = false;
+                }
+                
+                if (!item.classList.contains('is-invalid')) {
+                    item.classList.add('is-valid');
+                }
+            }
+        });
+        
+        if (!isValid) {
+            evt.preventDefault();
+        }
+    }
+    
+    // Validación en tiempo real
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            if (input.id !== 'Descripcion') {
+                input.addEventListener('keydown', prevenirEspaciosInicio);
+            }
+        });
+    });
+</script>

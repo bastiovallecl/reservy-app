@@ -1,0 +1,50 @@
+<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+	<div class="sb-sidenav-menu">
+		<div class="nav">
+			<div class="sb-sidenav-menu-heading">Home</div>
+			<a class="nav-link" asp-controller="Home" asp-action="Index">
+				<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+				Inicio
+			</a>
+			
+			<div class="sb-sidenav-menu-heading">Gestión</div>
+			<a class="nav-link" asp-controller="Espacios" asp-action="Index">
+				<div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+				Espacios
+			</a>
+			<a class="nav-link" asp-controller="Eventos" asp-action="Index">
+				<div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
+				Eventos
+			</a>
+			<a class="nav-link" asp-controller="Recursos" asp-action="Index">
+				<div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
+				Recursos
+			</a>
+			<a class="nav-link" asp-controller="Reservas" asp-action="Index">
+				<div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
+				Reservas
+			</a>
+			
+			@if (User.IsInRole("Administrador"))
+			{
+				<div class="sb-sidenav-menu-heading">Administración</div>
+				<a class="nav-link" asp-controller="Usuarios" asp-action="Index">
+					<div class="sb-nav-link-icon"><i class="fa-solid fa-user-secret"></i></div>
+					Gestión Usuarios
+				</a>
+			}
+		</div>
+	</div>
+	<div class="sb-sidenav-footer">
+		<div class="small">Usuario Conectado:</div>
+		@if (TempData.Peek("nombre") != null)
+		{
+			<label>Bienvenido @TempData.Peek("nombre")</label>
+		}
+		else
+		{
+			<span class="text-muted">Sesión no disponible</span>
+			<a class="d-block" asp-controller="Home" asp-action="Login">Ir a Login</a>
+		}
+	</div>
+</nav>

@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - Sistema de Gestión de Eventos</title>
+	<script type="importmap"></script>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/styles.css" />
+	<link rel="stylesheet" href="~/css/dark-mode.css" asp-append-version="true" />
+	<script src="~/js/fontawesome.all.js"></script>
+	<!-- Inicializar tema oscuro antes de renderizar el body -->
+	<script src="~/js/dark-mode.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="sb-nav-fixed">
+	<header>
+		<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+			<!-- Navbar Brand-->
+			<a class="navbar-brand ps-3" asp-controller="Home" asp-action="Index">Gestión de Eventos</a>
+			<!-- Sidebar Toggle-->
+			<button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+			<!-- Navbar Search-->
+			<div class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+				<div class="input-group position-relative">
+					<input class="form-control" id="searchInput" type="text" placeholder="Buscar en el sistema..." aria-label="Buscar" autocomplete="off" />
+					<button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+					<div id="searchResults" class="position-absolute bg-white shadow-lg rounded" style="top: 100%; left: 0; right: 0; max-height: 400px; overflow-y: auto; z-index: 1000; display: none; margin-top: 5px;"></div>
+				</div>
+			</div>
+			<!-- Navbar-->
+			<ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+				<!-- Botón toggle modo oscuro -->
+				<li class="nav-item me-2">
+					<button class="dark-mode-toggle nav-link border-0" id="darkModeToggle" type="button" title="Cambiar modo de visualización" aria-label="Cambiar entre modo claro y oscuro">
+						<i class="fas fa-moon"></i>
+					</button>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+					<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+						<li><a class="dropdown-item" asp-action="Configuracion" asp-controller="Home"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+						<li><a class="dropdown-item" asp-action="RegistroActividad" asp-controller="Home"><i class="fas fa-history me-2"></i>Registro de Actividad</a></li>
+						<li><hr class="dropdown-divider" /></li>
+						<li><a class="dropdown-item" asp-action="Logout" asp-controller="Home"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+	</header>
+	<div id="layoutSidenav">
+		<div id="layoutSidenav_nav">
+			<partial name="_LateralMenu" />
+		</div>
+		<div id="layoutSidenav_content">
+			<main>
+				<div class="container-fluid px-5">
+					@RenderBody()
+				</div>
+			</main>
+			<footer class="py-4 bg-light mt-auto">
+				<div class="container-fluid px-4">
+					<div class="d-flex align-items-center justify-content-between small">
+						<div class="text-muted">Copyright &copy; Todos los derechos reservados - Sistema de Gestión de Eventos</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</div>
+
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/scripts.js" asp-append-version="true"></script>
+	<script src="~/js/sweetalert.js"></script>
+	<script src="~/js/busqueda.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

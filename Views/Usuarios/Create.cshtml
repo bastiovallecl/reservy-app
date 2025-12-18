@@ -1,0 +1,194 @@
+@model ProyectoGestionEventos.Models.Usuario
+
+@{
+    ViewData["Title"] = "Crear Usuario";
+}
+
+<div class="py-4">
+    <h1 class="bg-primary text-white text-center py-4 rounded shadow mb-4">
+        <i class="fas fa-user-plus me-2"></i>Crear Usuario
+    </h1>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Run" class="form-label fw-bold">RUN</label>
+                        <input asp-for="Run" class="form-control" placeholder="12345678-9" />
+                        <span asp-validation-for="Run" class="text-danger"></span>
+                        <div id="e-Run" class="small"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Nombre" class="form-label fw-bold">Nombre</label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                        <div id="e-Nombre" class="small"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Apellido" class="form-label fw-bold">Apellido</label>
+                        <input asp-for="Apellido" class="form-control" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                        <div id="e-Apellido" class="small"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label fw-bold">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <div id="e-Email" class="small"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Telefono" class="form-label fw-bold">Teléfono</label>
+                        <input asp-for="Telefono" class="form-control" onkeypress="return soloNumeros(event)" maxlength="15" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                        <div id="e-Telefono" class="small"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="TipoUsuario" class="form-label fw-bold">Tipo de Usuario</label>
+                        <select asp-for="TipoUsuario" class="form-select" asp-items="ViewBag.TipoUsuario">
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                        <span asp-validation-for="TipoUsuario" class="text-danger"></span>
+                        <div id="e-TipoUsuario" class="small"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="IdRol" class="form-label fw-bold">Rol</label>
+                        <select asp-for="IdRol" class="form-select" asp-items="ViewBag.IdRol">
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                        <span asp-validation-for="IdRol" class="text-danger"></span>
+                        <div id="e-IdRol" class="small"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Cargo" class="form-label fw-bold">Cargo (Opcional)</label>
+                        <input asp-for="Cargo" class="form-control" />
+                        <span asp-validation-for="Cargo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label fw-bold">Contraseña</label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <div id="e-Password" class="small"></div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="reset" onclick="limpiar()" class="btn btn-secondary">
+                        <i class="fas fa-eraser me-2"></i>Limpiar
+                    </button>
+                    <button type="submit" onclick="validar(event)" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Crear
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-end mt-4">
+        <a asp-action="Index" class="btn btn-dark">
+            <i class="fas fa-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+</div>
+
+<script src="~/js/helper.js"></script>
+<script>
+    const validar = (evt) => {
+        let isValid = true;
+        document.querySelectorAll('form .form-control, form .form-select').forEach(item => {
+            const errorDiv = document.getElementById('e-' + item.id);
+            if (!errorDiv) return;
+            
+            if (item.value.trim() == '' && item.id != 'Cargo') {
+                item.classList.add('is-invalid', 'border-red-500');
+                errorDiv.innerHTML = '<span class="text-danger">Campo obligatorio</span>';
+                isValid = false;
+            } else {
+                errorDiv.innerHTML = '';
+                item.classList.remove('is-invalid', 'border-red-500');
+                
+                // Validar solo espacios
+                if (item.value.trim() !== '' && !validarSoloEspacios(item.value) && item.id != 'Cargo') {
+                    item.classList.add('is-invalid', 'border-red-500');
+                    errorDiv.innerHTML = '<span class="text-danger">No puede contener solo espacios</span>';
+                    isValid = false;
+                }
+                
+                // Validar Email
+                if (item.id == 'Email') {
+                    if (!validarMail(item.value)) {
+                        item.classList.add('is-invalid', 'border-red-500');
+                        errorDiv.innerHTML = '<span class="text-danger">Email no tiene formato correcto</span>';
+                        isValid = false;
+                    }
+                }
+                
+                // Validar RUN
+                if (item.id == 'Run') {
+                    if (!validarLongitudRun(item.value)) {
+                        item.classList.add('is-invalid', 'border-red-500');
+                        errorDiv.innerHTML = '<span class="text-danger">El RUN debe tener al menos 10 caracteres (ej: 12345678-9)</span>';
+                        isValid = false;
+                    } else if (!validaRun(item.value)) {
+                        item.classList.add('is-invalid', 'border-red-500');
+                        errorDiv.innerHTML = '<span class="text-danger">RUN no es válido</span>';
+                        isValid = false;
+                    }
+                }
+                
+                // Validar Nombre y Apellido (solo letras)
+                if ((item.id == 'Nombre' || item.id == 'Apellido') && item.value.trim() !== '') {
+                    if (!validarSoloLetras(item.value)) {
+                        item.classList.add('is-invalid', 'border-red-500');
+                        errorDiv.innerHTML = '<span class="text-danger">Solo puede contener letras</span>';
+                        isValid = false;
+                    }
+                }
+                
+                // Validar Teléfono
+                if (item.id == 'Telefono' && item.value.trim() !== '') {
+                    if (!validarTelefono(item.value)) {
+                        item.classList.add('is-invalid', 'border-red-500');
+                        errorDiv.innerHTML = '<span class="text-danger">El teléfono debe tener entre 9 y 15 dígitos</span>';
+                        isValid = false;
+                    }
+                }
+                
+                if (!item.classList.contains('is-invalid')) {
+                    item.classList.add('is-valid', 'border-green-500');
+                }
+            }
+        });
+        
+        if (!isValid) {
+            evt.preventDefault();
+        }
+    }
+    
+    // Agregar validación en tiempo real
+    document.addEventListener('DOMContentLoaded', function() {
+        // Prevenir espacios al inicio en todos los campos de texto
+        document.querySelectorAll('input[type="text"], input[type="email"]').forEach(input => {
+            input.addEventListener('keydown', prevenirEspaciosInicio);
+        });
+        
+        // Validación de RUN en tiempo real
+        const runInput = document.getElementById('Run');
+        if (runInput) {
+            runInput.addEventListener('input', function() {
+                // Permitir solo números, guión y letra K
+                this.value = this.value.replace(/[^0-9kK-]/g, '');
+            });
+        }
+    });
+</script>

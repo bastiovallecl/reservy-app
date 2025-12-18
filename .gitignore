@@ -1,0 +1,42 @@
+# Build results
+bin/
+obj/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.rsuser
+*.sln.docstates
+
+# Rider
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+# Uncomment if you want to ignore packages folder (not recommended with PackageReference)
+# packages/
+
+# Test results
+TestResults/
+
+# Publish output
+publish/
+
+# EF Core
+**/Migrations/*.Designer.cs
+
+# Azure / local secrets (optional)
+# If you use User Secrets, keep appsettings.Development.json out of git instead.
+# appsettings.Development.json

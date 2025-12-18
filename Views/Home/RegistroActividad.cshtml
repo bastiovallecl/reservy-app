@@ -1,0 +1,248 @@
+@model IEnumerable<ProyectoGestionEventos.Models.ActividadUsuario>
+@{
+    ViewData["Title"] = "Registro de Actividad";
+    var paginaActual = ViewBag.PaginaActual ?? 1;
+    var totalPaginas = ViewBag.TotalPaginas ?? 1;
+    var totalActividades = ViewBag.TotalActividades ?? 0;
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">
+        <i class="fas fa-history me-2"></i>Registro de Actividad
+    </h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item active">Registro de Actividad</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-list me-2"></i>
+            Historial de Actividades (@totalActividades registros)
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th><i class="fas fa-calendar-alt me-1"></i>Fecha y Hora</th>
+                                <th><i class="fas fa-user me-1"></i>Usuario</th>
+                                <th><i class="fas fa-tag me-1"></i>Acción</th>
+                                <th><i class="fas fa-cube me-1"></i>Módulo</th>
+                                <th><i class="fas fa-info-circle me-1"></i>Descripción</th>
+                                <th><i class="fas fa-network-wired me-1"></i>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var actividad in Model)
+                            {
+                                var badgeClass = actividad.TipoAccion switch
+                                {
+                                    "Login" => "success",
+                                    "Logout" => "secondary",
+                                    "Crear" => "primary",
+                                    "Editar" or "Actualizar" => "info",
+                                    "Eliminar" => "danger",
+                                    "Aprobar" => "success",
+                                    "Rechazar" => "warning",
+                                    _ => "secondary"
+                                };
+
+                                var iconoAccion = actividad.TipoAccion switch
+                                {
+                                    "Login" => "fa-sign-in-alt",
+                                    "Logout" => "fa-sign-out-alt",
+                                    "Crear" => "fa-plus",
+                                    "Editar" or "Actualizar" => "fa-edit",
+                                    "Eliminar" => "fa-trash",
+                                    "Aprobar" => "fa-check",
+                                    "Rechazar" => "fa-times",
+                                    "Cambio Password" => "fa-key",
+                                    _ => "fa-circle"
+                                };
+
+                                <tr>
+                                    <td>
+                                        <div class="small">
+                                            <i class="far fa-calendar me-1"></i>@actividad.FechaHora.ToString("dd/MM/yyyy")
+                                        </div>
+                                        <div class="small text-muted">
+                                            <i class="far fa-clock me-1"></i>@actividad.FechaHora.ToString("HH:mm:ss")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (actividad.Usuario != null)
+                                        {
+                                            <div class="fw-bold">@actividad.Usuario.Nombre @actividad.Usuario.Apellido</div>
+                                            <div class="small text-muted">@actividad.Usuario.Email</div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Usuario no disponible</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-@badgeClass">
+                                            <i class="fas @iconoAccion me-1"></i>@actividad.TipoAccion
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-dark">
+                                            <i class="fas fa-layer-group me-1"></i>@actividad.Modulo
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(actividad.Descripcion))
+                                        {
+                                            <span class="text-muted">@actividad.Descripcion</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">Sin descripción</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <small class="text-muted font-monospace">
+                                            @if (!string.IsNullOrEmpty(actividad.DireccionIP))
+                                            {
+                                                <i class="fas fa-map-marker-alt me-1"></i>@actividad.DireccionIP
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </small>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                @if (totalPaginas > 1)
+                {
+                    <nav aria-label="Navegación de actividades">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+                                <a class="page-link" href="?pagina=@(paginaActual - 1)">
+                                    <i class="fas fa-chevron-left"></i> Anterior
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= totalPaginas; i++)
+                            {
+                                if (i == 1 || i == totalPaginas || (i >= paginaActual - 2 && i <= paginaActual + 2))
+                                {
+                                    <li class="page-item @(i == paginaActual ? "active" : "")">
+                                        <a class="page-link" href="?pagina=@i">@i</a>
+                                    </li>
+                                }
+                                else if (i == paginaActual - 3 || i == paginaActual + 3)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                            }
+
+                            <li class="page-item @(paginaActual == totalPaginas ? "disabled" : "")">
+                                <a class="page-link" href="?pagina=@(paginaActual + 1)">
+                                    Siguiente <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+            else
+            {
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-info-circle fa-3x mb-3 d-block"></i>
+                    <h5>No hay actividades registradas</h5>
+                    <p class="mb-0">Aún no se han registrado actividades en el sistema.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Estadísticas Rápidas -->
+    @if (Model != null && Model.Any())
+    {
+        var actividadesHoy = Model.Count(a => a.FechaHora.Date == DateTime.Today);
+        var actividadesEstaSemana = Model.Count(a => a.FechaHora >= DateTime.Today.AddDays(-7));
+        var accionesPorTipo = Model.GroupBy(a => a.TipoAccion).OrderByDescending(g => g.Count()).Take(5);
+
+        <div class="row">
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-primary text-white mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-white-75 small">Hoy</div>
+                                <div class="h2 mb-0">@actividadesHoy</div>
+                            </div>
+                            <i class="fas fa-calendar-day fa-3x text-white-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-success text-white mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-white-75 small">Última Semana</div>
+                                <div class="h2 mb-0">@actividadesEstaSemana</div>
+                            </div>
+                            <i class="fas fa-calendar-week fa-3x text-white-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-md-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-2"></i>Acciones Más Frecuentes
+                    </div>
+                    <div class="card-body">
+                        @foreach (var grupo in accionesPorTipo)
+                        {
+                            var porcentaje = (grupo.Count() * 100.0 / Model.Count());
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small">
+                                    <span>@grupo.Key</span>
+                                    <span>@grupo.Count() (@porcentaje.ToString("F1")%)</span>
+                                </div>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: @(porcentaje)%" aria-valuenow="@porcentaje" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .font-monospace {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+    </style>
+}

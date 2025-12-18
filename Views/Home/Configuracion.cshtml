@@ -1,0 +1,191 @@
+@model ProyectoGestionEventos.Models.ConfiguracionUsuario
+@{
+    ViewData["Title"] = "Configuración";
+    var usuario = ViewBag.Usuario as ProyectoGestionEventos.Models.Usuario;
+}
+
+<div class="container-xl px-4 mt-4">
+    <nav class="nav nav-borders mb-4">
+        <a class="nav-link active ms-0" href="#perfil">Perfil de Usuario</a>
+        <a class="nav-link" href="#seguridad">Seguridad</a>
+        <a class="nav-link" href="#preferencias">Preferencias</a>
+    </nav>
+
+    @if (TempData["mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-xl-4">
+            <!-- Tarjeta de Perfil -->
+            <div class="card mb-4" id="perfil">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-user me-2"></i>Información del Perfil
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="avatar-lg mx-auto mb-3">
+                            <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border-radius: 50%; font-size: 2.5rem; margin: 0 auto;">
+                                @if (usuario != null)
+                                {
+                                    @(usuario.Nombre.Substring(0, 1) + usuario.Apellido.Substring(0, 1))
+                                }
+                            </div>
+                        </div>
+                        @if (usuario != null)
+                        {
+                            <h5 class="card-title mb-1">@usuario.Nombre @usuario.Apellido</h5>
+                            <div class="text-muted mb-2">@usuario.TipoUsuario</div>
+                            <div class="small text-muted">
+                                <i class="fas fa-envelope me-1"></i>@usuario.Email
+                            </div>
+                            <div class="small text-muted">
+                                <i class="fas fa-phone me-1"></i>@usuario.Telefono
+                            </div>
+                            <div class="small text-muted">
+                                <i class="fas fa-id-card me-1"></i>@usuario.Run
+                            </div>
+                            @if (!string.IsNullOrEmpty(usuario.Cargo))
+                            {
+                                <div class="small text-muted">
+                                    <i class="fas fa-briefcase me-1"></i>@usuario.Cargo
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-8">
+            <!-- Cambiar Contraseña -->
+            <div class="card mb-4" id="seguridad">
+                <div class="card-header bg-danger text-white">
+                    <i class="fas fa-lock me-2"></i>Cambiar Contraseña
+                </div>
+                <div class="card-body">
+                    <form asp-action="CambiarPassword" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña Actual</label>
+                            <input type="password" class="form-control" name="passwordActual" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <input type="password" class="form-control" name="passwordNueva" minlength="6" required>
+                            <small class="text-muted">Mínimo 6 caracteres</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirmar Nueva Contraseña</label>
+                            <input type="password" class="form-control" name="passwordConfirmar" minlength="6" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-key me-2"></i>Actualizar Contraseña
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preferencias -->
+            <div class="card mb-4" id="preferencias">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-cog me-2"></i>Preferencias del Sistema
+                </div>
+                <div class="card-body">
+                    <form asp-action="Configuracion" method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Tema de Interfaz</label>
+                                <select class="form-select" asp-for="Tema">
+                                    <option value="claro">Claro</option>
+                                    <option value="oscuro">Oscuro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Idioma</label>
+                                <select class="form-select" asp-for="Idioma">
+                                    <option value="es">Español</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Elementos por Página</label>
+                            <select class="form-select" asp-for="ElementosPorPagina">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="mb-3"><i class="fas fa-bell me-2"></i>Notificaciones</h6>
+                        
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" asp-for="NotificacionesEmail" id="notifEmail">
+                            <label class="form-check-label" for="notifEmail">
+                                Recibir notificaciones por correo electrónico
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" asp-for="NotificacionesReservas" id="notifReservas">
+                            <label class="form-check-label" for="notifReservas">
+                                Notificaciones de cambios en reservas
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" asp-for="NotificacionesEventos" id="notifEventos">
+                            <label class="form-check-label" for="notifEventos">
+                                Notificaciones de nuevos eventos
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-2"></i>Guardar Preferencias
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .nav-borders .nav-link {
+            color: #69707a;
+            border-bottom: 0.125rem solid transparent;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+        .nav-borders .nav-link.active {
+            color: #0061f2;
+            border-bottom-color: #0061f2;
+        }
+
+        .nav-borders .nav-link:hover {
+            border-bottom-color: #0061f2;
+        }
+    </style>
+}

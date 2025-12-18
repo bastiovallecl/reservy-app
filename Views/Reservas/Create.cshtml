@@ -1,0 +1,183 @@
+@model ProyectoGestionEventos.Models.Reserva
+
+@{
+ ViewData["Title"] = "Crear Reserva";
+}
+
+<div class="mt-5">
+ <h1 class="bg-info text-white text-center py-4 rounded shadow mb-4">
+ <i class="fas fa-calendar-check me-2"></i>Crear Reserva
+ </h1>
+
+ <div class="card shadow">
+ <div class="card-body">
+ <form asp-action="Create" id="formReserva">
+ <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+ 
+ <div class="row g-3">
+ <div class="col-md-6">
+ <label asp-for="IdEspacio" class="form-label fw-bold">Espacio</label>
+ <select asp-for="IdEspacio" class="form-select" asp-items="ViewBag.IdEspacio">
+ <option value="">-- Seleccione un Espacio --</option>
+ </select>
+ <span asp-validation-for="IdEspacio" class="text-danger"></span>
+ <div id="e-IdEspacio" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="IdUsuario" class="form-label fw-bold">Usuario Solicitante</label>
+ <select asp-for="IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario">
+ <option value="">-- Seleccione un Usuario --</option>
+ </select>
+ <span asp-validation-for="IdUsuario" class="text-danger"></span>
+ <div id="e-IdUsuario" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="IdEvento" class="form-label fw-bold">Evento</label>
+ <select asp-for="IdEvento" class="form-select" asp-items="ViewBag.IdEvento">
+ <option value="">-- Seleccione un Evento --</option>
+ </select>
+ <span asp-validation-for="IdEvento" class="text-danger"></span>
+ <div id="e-IdEvento" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="EstadoReserva" class="form-label fw-bold">Estado</label>
+ <select asp-for="EstadoReserva" class="form-select" asp-items="ViewBag.EstadoReserva">
+ <option value="">-- Seleccione Estado --</option>
+ </select>
+ <span asp-validation-for="EstadoReserva" class="text-danger"></span>
+ <div id="e-EstadoReserva" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="FechaInicio" class="form-label fw-bold">Fecha y Hora de Inicio</label>
+ <input asp-for="FechaInicio" type="datetime-local" class="form-control" />
+ <span asp-validation-for="FechaInicio" class="text-danger"></span>
+ <div id="e-FechaInicio" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="FechaFin" class="form-label fw-bold">Fecha y Hora de Fin</label>
+ <input asp-for="FechaFin" type="datetime-local" class="form-control" />
+ <span asp-validation-for="FechaFin" class="text-danger"></span>
+ <div id="e-FechaFin" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="CantidadAsistentes" class="form-label fw-bold">Cantidad de Asistentes</label>
+ <input asp-for="CantidadAsistentes" type="number" min="1" class="form-control" />
+ <span asp-validation-for="CantidadAsistentes" class="text-danger"></span>
+ <div id="e-CantidadAsistentes" class="small"></div>
+ </div>
+
+ <div class="col-12">
+ <label asp-for="Observaciones" class="form-label fw-bold">Observaciones (Opcional)</label>
+ <textarea asp-for="Observaciones" rows="3" class="form-control"></textarea>
+ <span asp-validation-for="Observaciones" class="text-danger"></span>
+ </div>
+ </div>
+
+ <div class="d-flex justify-content-center gap-3 mt-4">
+ <button type="reset" onclick="limpiar()" class="btn btn-secondary">
+ <i class="fas fa-eraser me-2"></i>Limpiar
+ </button>
+ <button type="submit" class="btn btn-info text-white">
+ <i class="fas fa-save me-2"></i>Crear
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+
+ <div class="text-end mt-4">
+ <a asp-action="Index" class="btn btn-dark">
+ <i class="fas fa-arrow-left me-2"></i>Volver
+ </a>
+ </div>
+</div>
+
+<script src="~/js/helper.js"></script>
+<script>
+ document.getElementById('formReserva').addEventListener('submit', function(evt) {
+ console.log('=== INICIO VALIDACIÓN FORMULARIO ===');
+ let isValid = true;
+ 
+ // Limpiar validaciones previas
+ document.querySelectorAll('form input:not([type="hidden"]):not([readonly]), form select, form textarea').forEach(item => {
+ const errorDiv = document.getElementById('e-' + item.id);
+ if (errorDiv) {
+ errorDiv.innerHTML = '';
+ }
+ item.classList.remove('is-invalid', 'border-red-500', 'is-valid', 'border-green-500');
+ });
+ 
+ // Validar cada campo
+ document.querySelectorAll('form input:not([type="hidden"]):not([readonly]), form select, form textarea').forEach(item => {
+ const errorDiv = document.getElementById('e-' + item.id);
+ if (!errorDiv) return;
+ 
+ console.log(`Validando campo: ${item.id} = "${item.value}"`);
+ 
+ // Validar campos obligatorios (excepto observaciones)
+ if (item.id != 'Observaciones' && (!item.value || item.value.trim() == '')) {
+ console.log(`Campo ${item.id} está vacío`);
+ item.classList.add('is-invalid', 'border-red-500');
+ errorDiv.innerHTML = '<span class="text-danger">Campo obligatorio</span>';
+ isValid = false;
+ } else if (item.value && item.value.trim() != '') {
+ // Validaciones específicas por campo
+ if (item.id == 'CantidadAsistentes' && item.value <= 0) {
+ console.log(`CantidadAsistentes inválida: ${item.value}`);
+ item.classList.add('is-invalid', 'border-red-500');
+ errorDiv.innerHTML = '<span class="text-danger">Debe haber al menos 1 asistente</span>';
+ isValid = false;
+ }
+ 
+ if (item.id == 'FechaInicio') {
+ const fechaInicio = new Date(item.value);
+ const ahora = new Date();
+ console.log(`Fecha Inicio: ${fechaInicio}, Ahora: ${ahora}`);
+ if (fechaInicio < ahora) {
+ console.log(`Fecha de inicio es pasada`);
+ item.classList.add('is-invalid', 'border-red-500');
+ errorDiv.innerHTML = '<span class="text-danger">La fecha de inicio no puede ser pasada</span>';
+ isValid = false;
+ }
+ }
+ 
+ if (item.id == 'FechaFin') {
+ const fechaInicioValue = document.getElementById('FechaInicio').value;
+ const fechaFinValue = item.value;
+ console.log(`Validando rango: Inicio=${fechaInicioValue}, Fin=${fechaFinValue}`);
+ if (fechaInicioValue && fechaFinValue && !validarRangoFechas(fechaInicioValue, fechaFinValue)) {
+ console.log(`❌ Fecha fin no es posterior a fecha inicio`);
+ item.classList.add('is-invalid', 'border-red-500');
+ errorDiv.innerHTML = '<span class="text-danger">La fecha fin debe ser posterior a la fecha inicio</span>';
+ isValid = false;
+ }
+ }
+ 
+ // Marcar como válido si no hay errores
+ if (!item.classList.contains('is-invalid')) {
+ console.log(`Campo ${item.id} válido`);
+ item.classList.add('is-valid', 'border-green-500');
+ }
+ }
+ });
+ 
+ console.log(`Resultado validación: isValid = ${isValid}`);
+ 
+ // Prevenir envío solo si hay errores
+ if (!isValid) {
+ console.log('FORMULARIO INVÁLIDO - Envío cancelado');
+ evt.preventDefault();
+ return false;
+ }
+ 
+ console.log('FORMULARIO VÁLIDO - Enviando...');
+ // Permitir el envío del formulario
+ return true;
+ });
+</script>

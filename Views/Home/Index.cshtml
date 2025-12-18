@@ -1,0 +1,472 @@
+﻿@using System.Text.Json
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Dashboard</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Panel de Control - Métricas en Tiempo Real</li>
+    </ol>
+    
+    <!-- Indicadores Clave de Rendimiento (KPIs) -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small">Reservas Hoy</div>
+                            <div class="h2">@ViewBag.ReservasHoy</div>
+                        </div>
+                        <i class="fas fa-calendar-day fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <small>Eventos programados para hoy</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small">Próxima Semana</div>
+                            <div class="h2">@ViewBag.ReservasProximas</div>
+                        </div>
+                        <i class="fas fa-clock fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <small>Reservas en los próximos 7 días</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-danger text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small">Pendientes</div>
+                            <div class="h2">@ViewBag.ReservasPendientes</div>
+                        </div>
+                        <i class="fas fa-exclamation-circle fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" asp-controller="Reservas" asp-action="Index">Revisar</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small">Tasa de Aprobación</div>
+                            <div class="h2">@ViewBag.TasaAprobacion%</div>
+                        </div>
+                        <i class="fas fa-check-circle fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <small>Reservas aprobadas vs totales</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métricas Operacionales -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Reservas Este Mes</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.ReservasMesActual</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Aprobadas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.ReservasAprobadas</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-thumbs-up fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Rechazadas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.ReservasRechazadas</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-thumbs-down fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Reservas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.TotalReservas</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-bolt me-1"></i>
+            Acciones Rápidas
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <a asp-controller="Reservas" asp-action="Create" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-calendar-check me-2"></i>Nueva Reserva
+                    </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <a asp-controller="Eventos" asp-action="Create" class="btn btn-warning btn-lg w-100">
+                        <i class="fas fa-calendar-plus me-2"></i>Nuevo Evento
+                    </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <a asp-controller="Espacios" asp-action="Index" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-building me-2"></i>Ver Espacios
+                    </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <a asp-controller="Recursos" asp-action="Index" class="btn btn-info btn-lg w-100">
+                        <i class="fas fa-box-open me-2"></i>Ver Recursos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos y Análisis -->
+    <div class="row">
+        <!-- Distribución de Reservas por Estado -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-1"></i>
+                    Distribución de Reservas por Estado
+                </div>
+                <div class="card-body">
+                    <canvas id="reservasEstadoChart" width="100%" height="50"></canvas>
+                </div>
+                <div class="card-footer small text-muted">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <strong class="text-success">@ViewBag.PorcentajeAprobadas%</strong>
+                            <br><small>Aprobadas</small>
+                        </div>
+                        <div class="col-4">
+                            <strong class="text-warning">@ViewBag.PorcentajePendientes%</strong>
+                            <br><small>Pendientes</small>
+                        </div>
+                        <div class="col-4">
+                            <strong class="text-danger">@ViewBag.PorcentajeRechazadas%</strong>
+                            <br><small>Rechazadas</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Eventos por Tipo -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar me-1"></i>
+                    Distribución de Eventos por Tipo
+                </div>
+                <div class="card-body">
+                    <canvas id="eventosTipoChart" width="100%" height="50"></canvas>
+                </div>
+                <div class="card-footer small text-muted">
+                    Total de eventos activos: <strong>@ViewBag.TotalEventos</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Rankings -->
+    <div class="row">ge
+        <!-- Espacios Más Reservados -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-trophy me-1"></i>
+                    Top 5 Espacios Más Reservados
+                </div>
+                <div class="card-body">
+                    <canvas id="espaciosTopChart" width="100%" height="50"></canvas>
+                </div>
+                <div class="card-footer small text-muted">
+                    Basado en reservas aprobadas
+                </div>
+            </div>
+        </div>
+
+        <!-- Recursos Más Utilizados -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-star me-1"></i>
+                    Top 5 Recursos Más Utilizados
+                </div>
+                <div class="card-body">
+                    <canvas id="recursosTopChart" width="100%" height="50"></canvas>
+                </div>
+                <div class="card-footer small text-muted">
+                    Cantidad total solicitada en reservas
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen del Sistema -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-database me-1"></i>
+                    Resumen del Sistema
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="border-end">
+                                <i class="fas fa-users fa-3x text-primary mb-2"></i>
+                                <h3 class="mb-0">@ViewBag.TotalUsuarios</h3>
+                                <small class="text-muted">Usuarios Activos</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="border-end">
+                                <i class="fas fa-building fa-3x text-success mb-2"></i>
+                                <h3 class="mb-0">@ViewBag.TotalEspacios</h3>
+                                <small class="text-muted">Espacios Disponibles</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="border-end">
+                                <i class="fas fa-calendar-alt fa-3x text-warning mb-2"></i>
+                                <h3 class="mb-0">@ViewBag.TotalEventos</h3>
+                                <small class="text-muted">Eventos Activos</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <i class="fas fa-box-open fa-3x text-info mb-2"></i>
+                            <h3 class="mb-0">@ViewBag.TotalRecursos</h3>
+                            <small class="text-muted">Recursos Disponibles</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Gráfico de Distribución de Reservas por Estado
+        const ctxEstado = document.getElementById('reservasEstadoChart').getContext('2d');
+        new Chart(ctxEstado, {
+            type: 'doughnut',
+            data: {
+                labels: ['Aprobadas', 'Pendientes', 'Rechazadas'],
+                datasets: [{
+                    data: [@ViewBag.ReservasAprobadas, @ViewBag.ReservasPendientes, @ViewBag.ReservasRechazadas],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed + ' reservas';
+                                const total = @ViewBag.TotalReservas;
+                                if (total > 0) {
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    label += ' (' + percentage + '%)';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Eventos por Tipo
+        const ctxEventos = document.getElementById('eventosTipoChart').getContext('2d');
+        const eventosData = @Html.Raw(Json.Serialize(ViewBag.EventosPorTipo ?? new List<object>()));
+        const eventosLabels = eventosData.map(e => e.tipo);
+        const eventosCantidades = eventosData.map(e => e.cantidad);
+        
+        new Chart(ctxEventos, {
+            type: 'bar',
+            data: {
+                labels: eventosLabels,
+                datasets: [{
+                    label: 'Cantidad de Eventos',
+                    data: eventosCantidades,
+                    backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                    borderColor: 'rgba(255, 193, 7, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Espacios Más Reservados
+        const ctxEspacios = document.getElementById('espaciosTopChart').getContext('2d');
+        const espaciosData = @Html.Raw(Json.Serialize(ViewBag.EspaciosTop ?? new List<object>()));
+        const espaciosLabels = espaciosData.map(e => e.nombre);
+        const espaciosCantidades = espaciosData.map(e => e.cantidad);
+        
+        new Chart(ctxEspacios, {
+            type: 'bar',
+            data: {
+                labels: espaciosLabels,
+                datasets: [{
+                    label: 'Número de Reservas',
+                    data: espaciosCantidades,
+                    backgroundColor: 'rgba(40, 167, 69, 0.7)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Recursos Más Utilizados
+        const ctxRecursos = document.getElementById('recursosTopChart').getContext('2d');
+        const recursosData = @Html.Raw(Json.Serialize(ViewBag.RecursosTop ?? new List<object>()));
+        const recursosLabels = recursosData.map(r => r.nombre);
+        const recursosCantidades = recursosData.map(r => r.cantidad);
+        
+        new Chart(ctxRecursos, {
+            type: 'bar',
+            data: {
+                labels: recursosLabels,
+                datasets: [{
+                    label: 'Cantidad Utilizada',
+                    data: recursosCantidades,
+                    backgroundColor: 'rgba(23, 162, 184, 0.7)',
+                    borderColor: 'rgba(23, 162, 184, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+}

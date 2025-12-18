@@ -1,0 +1,185 @@
+@model ProyectoGestionEventos.Models.Reserva
+
+@{
+ ViewData["Title"] = "Editar Reserva";
+}
+
+<div class="mt-5">
+ <h1 class="bg-warning text-white text-center py-4 rounded shadow mb-4">
+ <i class="fas fa-edit me-2"></i>Editar Reserva #@Model.IdReserva
+ </h1>
+
+ <div class="card shadow">
+ <div class="card-body">
+ <form asp-action="Edit">
+ <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+ <input type="hidden" asp-for="IdReserva" />
+ <input type="hidden" asp-for="FechaSolicitud" />
+ <input type="hidden" asp-for="FechaRespuesta" />
+ 
+ <div class="row g-3">
+ <div class="col-md-6">
+ <label asp-for="IdEspacio" class="form-label fw-bold">Espacio</label>
+ <select asp-for="IdEspacio" class="form-select" asp-items="ViewBag.IdEspacio">
+ <option value="">-- Seleccione un Espacio --</option>
+ </select>
+ <span asp-validation-for="IdEspacio" class="text-danger"></span>
+ <div id="e-IdEspacio" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="IdUsuario" class="form-label fw-bold">Usuario Solicitante</label>
+ <select asp-for="IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario">
+ <option value="">-- Seleccione un Usuario --</option>
+ </select>
+ <span asp-validation-for="IdUsuario" class="text-danger"></span>
+ <div id="e-IdUsuario" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="IdEvento" class="form-label fw-bold">Evento</label>
+ <select asp-for="IdEvento" class="form-select" asp-items="ViewBag.IdEvento">
+ <option value="">-- Seleccione un Evento --</option>
+ </select>
+ <span asp-validation-for="IdEvento" class="text-danger"></span>
+ <div id="e-IdEvento" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="EstadoReserva" class="form-label fw-bold">Estado</label>
+ <select asp-for="EstadoReserva" class="form-select" asp-items="ViewBag.EstadoReserva">
+ <option value="">-- Seleccione Estado --</option>
+ </select>
+ <span asp-validation-for="EstadoReserva" class="text-danger"></span>
+ <div id="e-EstadoReserva" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="FechaInicio" class="form-label fw-bold">Fecha y Hora de Inicio</label>
+ <input asp-for="FechaInicio" type="datetime-local" class="form-control" />
+ <span asp-validation-for="FechaInicio" class="text-danger"></span>
+ <div id="e-FechaInicio" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="FechaFin" class="form-label fw-bold">Fecha y Hora de Fin</label>
+ <input asp-for="FechaFin" type="datetime-local" class="form-control" />
+ <span asp-validation-for="FechaFin" class="text-danger"></span>
+ <div id="e-FechaFin" class="small"></div>
+ </div>
+
+ <div class="col-md-6">
+ <label asp-for="CantidadAsistentes" class="form-label fw-bold">Cantidad de Asistentes</label>
+ <input asp-for="CantidadAsistentes" type="number" min="1" class="form-control" />
+ <span asp-validation-for="CantidadAsistentes" class="text-danger"></span>
+ <div id="e-CantidadAsistentes" class="small"></div>
+ </div>
+
+ <div class="col-md-6" id="motivoRechazoDiv" style="display: none;">
+ <label asp-for="MotivoRechazo" class="form-label fw-bold">Motivo de Rechazo</label>
+ <textarea asp-for="MotivoRechazo" rows="2" class="form-control"></textarea>
+ <span asp-validation-for="MotivoRechazo" class="text-danger"></span>
+ </div>
+
+ <div class="col-12">
+ <label asp-for="Observaciones" class="form-label fw-bold">Observaciones (Opcional)</label>
+ <textarea asp-for="Observaciones" rows="3" class="form-control"></textarea>
+ <span asp-validation-for="Observaciones" class="text-danger"></span>
+ </div>
+ </div>
+
+ <div class="d-flex justify-content-center gap-3 mt-4">
+ <button type="reset" class="btn btn-secondary">
+ <i class="fas fa-undo me-2"></i>Restablecer
+ </button>
+ <button type="submit" onclick="validar(event)" class="btn btn-success">
+ <i class="fas fa-save me-2"></i>Guardar
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+
+ <div class="text-end mt-4">
+ <a asp-action="Index" class="btn btn-dark">
+ <i class="fas fa-arrow-left me-2"></i>Volver
+ </a>
+ </div>
+</div>
+
+<script src="~/js/helper.js"></script>
+<script>
+ // Mostrar campo de motivo de rechazo si el estado es "Rechazada"
+ document.getElementById('EstadoReserva').addEventListener('change', function() {
+ const motivoDiv = document.getElementById('motivoRechazoDiv');
+ if (this.value === 'Rechazada') {
+ motivoDiv.style.display = 'block';
+ } else {
+ motivoDiv.style.display = 'none';
+ }
+ });
+
+ // Verificar al cargar la página
+ if (document.getElementById('EstadoReserva').value === 'Rechazada') {
+ document.getElementById('motivoRechazoDiv').style.display = 'block';
+ }
+
+ const validar = (evt) => {
+ let isValid = true;
+ document.querySelectorAll('form .:not([type="hidden"]), form .').forEach(item => {
+ const errorDiv = document.getElementById('e-' + item.id);
+ if (!errorDiv) return;
+ 
+ // Validar campos obligatorios
+ if (item.value.trim() == '' && item.id != 'Observaciones' && item.id != 'MotivoRechazo') {
+ item.classList.add('is-invalid', 'border-red-500');
+ errorDiv.innerHTML = '<span class="text-danger">Campo obligatorio</span>';
+ isValid = false;
+ } else {
+ errorDiv.innerHTML = '';
+ item.classList.remove('is-invalid', 'border-red-500');
+ 
+ if (item.id == 'CantidadAsistentes' && item.value <= 0) {
+ item.classList.add('is-invalid', 'border-red-500');
+ errorDiv.innerHTML = '<span class="text-danger">Debe haber al menos 1 asistente</span>';
+ isValid = false;
+ }
+ 
+ if (item.id == 'FechaFin') {
+ const fechaInicio = document.getElementById('FechaInicio').value;
+ const fechaFin = item.value;
+ if (fechaInicio && fechaFin && !validarRangoFechas(fechaInicio, fechaFin)) {
+ item.classList.add('is-invalid', 'border-red-500');
+ errorDiv.innerHTML = '<span class="text-danger">La fecha fin debe ser posterior a la fecha inicio</span>';
+ isValid = false;
+ }
+ }
+ 
+ if (!item.classList.contains('is-invalid')) {
+ item.classList.add('is-valid', 'border-green-500');
+ }
+ }
+ });
+
+ // Validar motivo de rechazo si el estado es "Rechazada"
+ const estadoReserva = document.getElementById('EstadoReserva').value;
+ const motivoRechazo = document.getElementById('MotivoRechazo');
+ if (estadoReserva === 'Rechazada' && motivoRechazo.value.trim() === '') {
+ motivoRechazo.classList.add('is-invalid', 'border-red-500');
+ isValid = false;
+ Swal.fire({
+ icon: 'warning',
+ title: 'Campo requerido',
+ text: 'Debe ingresar un motivo de rechazo'
+ });
+ }
+ 
+ if (!isValid) {
+ evt.preventDefault();
+ }
+ }
+</script>
+
+@section Scripts {
+ @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
