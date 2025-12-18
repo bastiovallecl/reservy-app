@@ -11,7 +11,7 @@ Aplicación web para **gestionar eventos, espacios, recursos y reservas** en un 
 
 ---
 
-## Lo más destacable (para reclutadores)
+## Lo más destacable
 
 - **Arquitectura MVC clara** con separación Controller/View/Model.
 - **Persistencia real** con EF Core (SQL Server) y entidades relacionales: Reservas ↔ Espacios/Usuarios/Eventos + Recursos asociados.
